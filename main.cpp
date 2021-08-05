@@ -199,6 +199,20 @@ public:
         this->sixthDegree = new Chord(*sharpsOrFlats[incrementSemitonePosition(notePos, 2)], ChordQuality::MINOR);
         this->seventhDegree = new Chord(*sharpsOrFlats[incrementSemitonePosition(notePos, 2)], ChordQuality::DIMINISHED);
     }
+
+    friend std::ostream &operator << (std::ostream &output, const MajorKey* key)
+    {   
+        
+        output << "Key: " << std::endl;
+        output << *key->firstDegree->root << key->firstDegree->quality << " Address: " << key->firstDegree->root << std::endl;
+        output << *key->secondDegree->root << key->secondDegree->quality << " Address: " << key->secondDegree->root << std::endl;
+        output << *key->thirdDegree->root << key->thirdDegree->quality << " Address: " << key->thirdDegree->root << std::endl;
+        output << *key->fourthDegree->root << key->fourthDegree->quality << " Address: " << key->fourthDegree->root << std::endl;
+        output << *key->fifthDegree->root << key->fifthDegree->quality << " Address: " << key->fifthDegree->root << std::endl;
+        output << *key->sixthDegree->root << key->sixthDegree->quality << " Address: " << key->sixthDegree->root << std::endl;
+        output << *key->seventhDegree->root << key->seventhDegree->quality << " Address: " << key->seventhDegree->root << std::endl;
+        return output;
+    }
 };
 
 struct Notes
@@ -338,9 +352,9 @@ Intervals getDescendingInterval(Note* startNote, Note* endNote)
 
 int incrementSemitonePosition(int &position, int increment)
 {
-    int incrementedPos = position + increment;
-    if(incrementedPos > 11) return (incrementedPos-12);
-    return incrementedPos;
+    position = position + increment;
+    if(position > 11) return (position-12);
+    return position;
 }
 
 int main()
@@ -348,12 +362,14 @@ int main()
 
     printNote(Notes::C_FLAT);
 
-
     std::cout << getAscendingInterval(Notes::C_NATURAL, Notes::B_FLAT) << std::endl;
     std::cout << getDescendingInterval(Notes::E_NATURAL, Notes::C_NATURAL) << std::endl;
     std::cout<< getAscendingInterval(Notes::F_NATURAL, Notes::B_FLAT) << std::endl;
 
-    std::cout << MajorKeys::C_MAJOR->firstDegree->root << " == " << Notes::C_NATURAL;
+    std::cout << MajorKeys::C_MAJOR->firstDegree->root << " == " << Notes::C_NATURAL << std::endl;
+
+    std::cout << MajorKeys::C_MAJOR;
+    std::cout << MajorKeys::D_MAJOR;
 
     return 0;
 }
