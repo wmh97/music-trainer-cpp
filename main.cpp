@@ -174,20 +174,30 @@ public:
 
 };
 
+int incrementSemitonePosition(int &position, int increment);
+
 class MajorKey
 {
 public:
-    Note* firstDegree;
-    Note* secondDegree;
-    Note* thirdDegree;
-    Note* fourthDegree;
-    Note* fifthDegree;
-    Note* sixthDegree;
-    Note* seventhDegree;
+    Chord* firstDegree;
+    Chord* secondDegree;
+    Chord* thirdDegree;
+    Chord* fourthDegree;
+    Chord* fifthDegree;
+    Chord* sixthDegree;
+    Chord* seventhDegree;
 
-    MajorKey(Note* key)
+    MajorKey(Note* &key, Note* sharpsOrFlats[])
     {
-        this->firstDegree = key;
+        this->firstDegree = new Chord(*key, ChordQuality::MAJOR);
+        int notePos = key->semitonePosition;
+
+        this->secondDegree = new Chord(*sharpsOrFlats[incrementSemitonePosition(notePos, 2)], ChordQuality::MINOR);
+        this->thirdDegree = new Chord(*sharpsOrFlats[incrementSemitonePosition(notePos, 2)], ChordQuality::MINOR);
+        this->fourthDegree = new Chord(*sharpsOrFlats[incrementSemitonePosition(notePos, 1)], ChordQuality::MAJOR);
+        this->fifthDegree = new Chord(*sharpsOrFlats[incrementSemitonePosition(notePos, 2)], ChordQuality::MAJOR);
+        this->sixthDegree = new Chord(*sharpsOrFlats[incrementSemitonePosition(notePos, 2)], ChordQuality::MINOR);
+        this->seventhDegree = new Chord(*sharpsOrFlats[incrementSemitonePosition(notePos, 2)], ChordQuality::DIMINISHED);
     }
 };
 
@@ -221,9 +231,8 @@ struct Notes
     static Note* B_SHARP;
     static Note* B_FLAT;
 
-    static void printNote(Note* note);
-    static Intervals getAscendingInterval(Note* startNote, Note* endNote);
-    static Intervals getDescendingInterval(Note* startNote, Note* endNote);
+    static Note* ALL_NOTES_FLATS[12];
+    static Note* ALL_NOTES_SHARPS[12];
 };
 
 Note* Notes::C_NATURAL = new Note(SemitonePositions::C, Accidentals::NATURAL);
@@ -254,31 +263,97 @@ Note* Notes::B_NATURAL = new Note(SemitonePositions::B, Accidentals::NATURAL);
 Note* Notes::B_SHARP = new Note(SemitonePositions::B, Accidentals::SHARP);
 Note* Notes::B_FLAT = new Note(SemitonePositions::B, Accidentals::FLAT);
 
-void Notes::printNote(Note* note)
+Note* Notes::ALL_NOTES_SHARPS[12] = {
+    Notes::C_NATURAL, Notes::C_SHARP, Notes::D_NATURAL,
+    Notes::D_SHARP, Notes::E_NATURAL, Notes::F_NATURAL,
+    Notes::F_SHARP, Notes::G_NATURAL, Notes::G_SHARP,
+    Notes::A_NATURAL, Notes::A_SHARP, Notes::B_NATURAL
+};
+
+Note* Notes::ALL_NOTES_FLATS[12] = {
+    Notes::C_NATURAL, Notes::D_FLAT, Notes::D_NATURAL,
+    Notes::E_FLAT, Notes::E_NATURAL, Notes::F_NATURAL,
+    Notes::G_FLAT, Notes::G_NATURAL, Notes::A_FLAT,
+    Notes::A_NATURAL, Notes::B_FLAT, Notes::B_NATURAL
+};
+
+struct MajorKeys
+{
+    static MajorKey* C_MAJOR;
+    static MajorKey* D_MAJOR;
+    static MajorKey* E_MAJOR;
+    static MajorKey* F_MAJOR;
+    static MajorKey* G_MAJOR;
+    static MajorKey* A_MAJOR;
+    static MajorKey* B_MAJOR;  
+
+    static MajorKey* C_SHARP_MAJOR;
+    static MajorKey* D_SHARP_MAJOR;
+    static MajorKey* F_SHARP_MAJOR;
+    static MajorKey* G_SHARP_MAJOR;
+    static MajorKey* A_SHARP_MAJOR;   
+
+    static MajorKey* D_FLAT_MAJOR;
+    static MajorKey* E_FLAT_MAJOR;
+    static MajorKey* G_FLAT_MAJOR;
+    static MajorKey* A_FLAT_MAJOR;
+    static MajorKey* B_FLAT_MAJOR;         
+};
+
+MajorKey* MajorKeys::C_MAJOR = new MajorKey(Notes::C_NATURAL, Notes::ALL_NOTES_SHARPS);
+MajorKey* MajorKeys::D_MAJOR = new MajorKey(Notes::D_NATURAL, Notes::ALL_NOTES_SHARPS);
+MajorKey* MajorKeys::E_MAJOR = new MajorKey(Notes::E_NATURAL, Notes::ALL_NOTES_SHARPS);
+MajorKey* MajorKeys::F_MAJOR = new MajorKey(Notes::F_NATURAL, Notes::ALL_NOTES_FLATS);
+MajorKey* MajorKeys::G_MAJOR = new MajorKey(Notes::G_NATURAL, Notes::ALL_NOTES_SHARPS);
+MajorKey* MajorKeys::A_MAJOR = new MajorKey(Notes::A_NATURAL, Notes::ALL_NOTES_SHARPS);
+MajorKey* MajorKeys::B_MAJOR = new MajorKey(Notes::B_NATURAL, Notes::ALL_NOTES_SHARPS);
+
+MajorKey* MajorKeys::C_SHARP_MAJOR = new MajorKey(Notes::C_SHARP, Notes::ALL_NOTES_SHARPS);
+MajorKey* MajorKeys::D_SHARP_MAJOR = new MajorKey(Notes::D_SHARP, Notes::ALL_NOTES_SHARPS);
+MajorKey* MajorKeys::F_SHARP_MAJOR = new MajorKey(Notes::F_SHARP, Notes::ALL_NOTES_SHARPS);
+MajorKey* MajorKeys::G_SHARP_MAJOR = new MajorKey(Notes::G_SHARP, Notes::ALL_NOTES_SHARPS);
+MajorKey* MajorKeys::A_SHARP_MAJOR = new MajorKey(Notes::A_SHARP, Notes::ALL_NOTES_SHARPS);
+
+MajorKey* MajorKeys::D_FLAT_MAJOR = new MajorKey(Notes::D_FLAT, Notes::ALL_NOTES_FLATS);
+MajorKey* MajorKeys::E_FLAT_MAJOR = new MajorKey(Notes::E_FLAT, Notes::ALL_NOTES_FLATS);
+MajorKey* MajorKeys::G_FLAT_MAJOR = new MajorKey(Notes::G_FLAT, Notes::ALL_NOTES_FLATS);
+MajorKey* MajorKeys::A_FLAT_MAJOR = new MajorKey(Notes::A_FLAT, Notes::ALL_NOTES_FLATS);
+MajorKey* MajorKeys::B_FLAT_MAJOR = new MajorKey(Notes::B_FLAT, Notes::ALL_NOTES_FLATS);
+
+
+void printNote(Note* note)
 {
     std::cout << *note << std::endl;
 }
 
-Intervals Notes::getAscendingInterval(Note* startNote, Note* endNote)
+Intervals getAscendingInterval(Note* startNote, Note* endNote)
 {
     return Intervals(*startNote + *endNote);
 }
 
-Intervals Notes::getDescendingInterval(Note* startNote, Note* endNote)
+Intervals getDescendingInterval(Note* startNote, Note* endNote)
 {
     return Intervals((*startNote + *endNote)-12);
+}
+
+int incrementSemitonePosition(int &position, int increment)
+{
+    int incrementedPos = position + increment;
+    if(incrementedPos > 11) return (incrementedPos-12);
+    return incrementedPos;
 }
 
 int main()
 {
 
-    Notes::printNote(Notes::C_FLAT);
+    printNote(Notes::C_FLAT);
 
 
-    std::cout << Notes::getAscendingInterval(Notes::C_NATURAL, Notes::B_FLAT) << std::endl;
-    std::cout << Notes::getDescendingInterval(Notes::E_NATURAL, Notes::C_NATURAL) << std::endl;
-    std::cout<< Notes::getAscendingInterval(Notes::F_NATURAL, Notes::B_FLAT);
+    std::cout << getAscendingInterval(Notes::C_NATURAL, Notes::B_FLAT) << std::endl;
+    std::cout << getDescendingInterval(Notes::E_NATURAL, Notes::C_NATURAL) << std::endl;
+    std::cout<< getAscendingInterval(Notes::F_NATURAL, Notes::B_FLAT) << std::endl;
 
+    std::cout << MajorKeys::C_MAJOR->firstDegree->root << " == " << Notes::C_NATURAL;
 
     return 0;
 }
