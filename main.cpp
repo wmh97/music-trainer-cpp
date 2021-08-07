@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <vector>
 
 enum SemitonePositions
 {
@@ -357,6 +358,83 @@ int incrementSemitonePosition(int &position, int increment)
     return position;
 }
 
+// more to be added.
+enum TimeSignatures
+{
+    FOUR_FOUR = 44,
+    THREE_FOUR = 34
+};
+
+class Bar
+{
+public:
+    TimeSignatures timeSignature;
+    int numberOfBeats;
+    Chord** beats; // ** means pointer to pointer - this will be an array of pointers which will be dynamically allocated.
+
+    Bar(TimeSignatures timeSig)
+    {
+        this->timeSignature = timeSig;
+        this->numberOfBeats = timeSig/10;
+        
+        // new array of pointers. setting to nullptr.
+        this->beats = new Chord*[this->numberOfBeats]; 
+        for(int i = 0; i < this->numberOfBeats; i++)
+        {
+            this->beats[i] = nullptr;
+        }
+    }
+
+    void addChordAtBeat(Chord* &chord, int beat)
+    {   
+        beat -= 1; // the beats 
+
+        if(beat > numberOfBeats)
+        {
+            std::cout << "Beat position invalid" << std::endl;
+            return;
+        }
+
+        this->beats[beat] = chord; // setting the chord to the beat of the bar specified.
+    }
+
+    friend std::ostream &operator << (std::ostream &output, const Bar &bar)
+    {   
+        for (int i = 0; i < bar.numberOfBeats; i++)
+        {
+            output << *bar.beats[i] << " ";
+        }
+        return output;
+    }
+};
+
+class Piece
+{
+public:
+    TimeSignatures timeSignature;
+    std::vector<Bar> bars;
+
+    Piece(TimeSignatures timeSig)
+    {
+        this->timeSignature = timeSig;
+    }
+
+    void addBar(Bar bar)
+    {
+        this->bars.push_back(bar);
+    }
+
+    friend std::ostream &operator << (std::ostream &output, const Piece &piece)
+    {   
+        for(int i = 0; i<piece.bars.size(); i++)
+        {
+            output << piece.bars[i] << std::endl;
+        }
+        return output;
+    }
+
+};
+
 int main()
 {
 
@@ -370,6 +448,18 @@ int main()
 
     std::cout << MajorKeys::C_MAJOR;
     std::cout << MajorKeys::D_MAJOR;
+
+    Bar bar(TimeSignatures::FOUR_FOUR);
+
+    bar.addChordAtBeat(MajorKeys::C_MAJOR->firstDegree, 1);
+    bar.addChordAtBeat(MajorKeys::C_MAJOR->secondDegree, 2);
+    bar.addChordAtBeat(MajorKeys::C_MAJOR->thirdDegree, 3);
+    bar.addChordAtBeat(MajorKeys::C_MAJOR->fourthDegree, 4);
+
+    std::cout << bar << std::endl;
+    Piece piece(TimeSignatures::FOUR_FOUR);
+    piece.addBar(bar);
+    std::cout << piece;
 
     return 0;
 }
