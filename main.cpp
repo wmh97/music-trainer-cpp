@@ -336,11 +336,6 @@ MajorKey* MajorKeys::A_FLAT_MAJOR = new MajorKey(Notes::A_FLAT, Notes::ALL_NOTES
 MajorKey* MajorKeys::B_FLAT_MAJOR = new MajorKey(Notes::B_FLAT, Notes::ALL_NOTES_FLATS);
 
 
-void printNote(Note* note)
-{
-    std::cout << *note << std::endl;
-}
-
 Intervals getAscendingInterval(Note* startNote, Note* endNote)
 {
     return Intervals(*startNote + *endNote);
@@ -387,14 +382,13 @@ public:
 
     void addChordAtBeat(Chord* &chord, int beat)
     {   
-        beat -= 1; // the beats 
-
         if(beat > numberOfBeats)
         {
             std::cout << "Beat position invalid" << std::endl;
             return;
         }
 
+        beat -= 1; // the beats 
         this->beats[beat] = chord; // setting the chord to the beat of the bar specified.
     }
 
@@ -411,21 +405,69 @@ public:
 class Piece
 {
 public:
+    std::string pieceTitle = "";
+
     TimeSignatures timeSignature;
     std::vector<Bar> bars;
+
+    Chord* latestChord = nullptr;
+    std::vector<Intervals> intervals;
+
 
     Piece(TimeSignatures timeSig)
     {
         this->timeSignature = timeSig;
     }
 
-    void addBar(Bar bar)
+    Piece(std::string title, TimeSignatures timeSig)
+    {
+        this->pieceTitle = title;
+        this->timeSignature = timeSig;
+    }
+
+    void addBar(Bar &bar)
     {
         this->bars.push_back(bar);
+
+        for (int i = 0; i<bar.numberOfBeats; i++)
+        {
+            Chord* tempChord;
+            
+            // if there is a chord in the bar, store it in the latestChord. Then if we find a new chord store that in
+            // tempChord, calculate the interval and update latestChord to that tempChord.
+            if(bar.beats[i])
+            {
+                if(latestChord)
+                {
+                    tempChord = bar.beats[i];
+                    this->intervals.push_back(getAscendingInterval(latestChord->root, tempChord->root));
+                    latestChord = tempChord;
+                }
+                else
+                {
+                    latestChord = bar.beats[i];
+                }
+                
+            }
+        }
+    }
+
+    void printIntervals()
+    {
+        std::cout << "Intervals: " << std::endl;
+        for(Intervals interval : this->intervals)
+        {
+            std::cout << interval;
+        }
     }
 
     friend std::ostream &operator << (std::ostream &output, const Piece &piece)
     {   
+        if(piece.pieceTitle != "")
+        {
+            std::cout << piece.pieceTitle << ": " << std::endl;
+        }
+        
         for(int i = 0; i<piece.bars.size(); i++)
         {
             output << piece.bars[i] << std::endl;
@@ -437,9 +479,6 @@ public:
 
 int main()
 {
-
-    printNote(Notes::C_FLAT);
-
     std::cout << getAscendingInterval(Notes::C_NATURAL, Notes::B_FLAT) << std::endl;
     std::cout << getDescendingInterval(Notes::E_NATURAL, Notes::C_NATURAL) << std::endl;
     std::cout<< getAscendingInterval(Notes::F_NATURAL, Notes::B_FLAT) << std::endl;
@@ -456,10 +495,15 @@ int main()
     bar.addChordAtBeat(MajorKeys::C_MAJOR->thirdDegree, 3);
     bar.addChordAtBeat(MajorKeys::C_MAJOR->fourthDegree, 4);
 
+    std::cout << "Bar: " << std::endl;
     std::cout << bar << std::endl;
-    Piece piece(TimeSignatures::FOUR_FOUR);
+
+    Piece piece("ABCDEFG", TimeSignatures::FOUR_FOUR);
+    piece.addBar(bar);
     piece.addBar(bar);
     std::cout << piece;
+
+    piece.printIntervals();
 
     return 0;
 }
