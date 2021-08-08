@@ -1,0 +1,65 @@
+#ifndef MUSICAL_CONSTANTS_H
+#define MUSICAL_CONSTANTS_H
+
+enum SemitonePositions
+{
+    C = 0,
+    D = 2,
+    E = 4,
+    F = 5,
+    G = 7,
+    A = 9,
+    B = 11
+};
+
+enum Accidentals
+{
+    SHARP = 1,
+    NATURAL = 0,
+    FLAT = -1
+};
+
+enum ChordQuality
+{
+    MAJOR,
+    MINOR,
+    DIMINISHED
+};
+
+enum Intervals
+{
+    ASCENDING_MINOR_2ND = 1,
+    ASCENDING_MAJOR_2ND = 2,
+    ASCENDING_MINOR_3RD = 3,
+    ASCENDING_MAJOR_3RD = 4,
+    ASCENDING_PERFECT_4TH = 5,
+    ASCENDING_TRITONE = 6,
+    ASCENDING_PERFECT_5TH = 7,
+    ASCENDING_MINOR_6TH = 8,
+    ASCENDING_MAJOR_6TH = 9,
+    ASCENDING_MINOR_7TH = 10,
+    ASCENDING_MAJOR_7TH = 11,
+    ASCENDING_OCTAVE = 12,
+
+    DESCENDING_MINOR_2ND = -1,
+    DESCENDING_MAJOR_2ND = -2,
+    DESCENDING_MINOR_3RD = -3,
+    DESCENDING_MAJOR_3RD = -4,
+    DESCENDING_PERFECT_4TH = -5,
+    DESCENDING_TRITONE = -6,
+    DESCENDING_PERFECT_5TH = -7,
+    DESCENDING_MINOR_6TH = -8,
+    DESCENDING_MAJOR_6TH = -9,
+    DESCENDING_MINOR_7TH = -10,
+    DESCENDING_MAJOR_7TH = -11,
+    DESCENDING_OCTAVE = -12
+};
+
+// more to be added.
+enum TimeSignatures
+{
+    FOUR_FOUR = 44,
+    THREE_FOUR = 34
+};
+
+#endif
