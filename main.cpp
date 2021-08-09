@@ -6,6 +6,7 @@
 #include "musicUtils.h"
 #include "keySignatures.h"
 #include "barsAndPieces.h"
+#include "linkedList.h"
 
 struct Notes
 {
@@ -153,6 +154,21 @@ int main()
     std::cout << piece;
 
     piece.printIntervals();
+    std::cout << std::endl;
+
+    // testing linked list - need to templatise this.
+    // linked list take the place of the vector that currently stores
+    // the intervals of between the chord changes.
+    LinkedList ll;
+    ll.addNodeValue(1);
+    ll.addNodeValue(2);
+    ll.addNodeValue(3);
+    ll.addNodeValue(4);
+    ll.addNodeValue(5);
+    ll.printList();
+    ll.deleteNodeAtIndex(2);
+    ll.printList();
+
 
     return 0;
 }
